@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents-md.org/schema/v1/agents-policy.json",
+  "title": "AgentsPolicy",
+  "description": "JSON Schema for the AGENTS.md policy structure as defined in AGENTS-MD-SPEC-001.",
+  "type": "object",
+  "required": ["identity"],
+  "additionalProperties": false,
+  "properties": {
+    "identity": {
+      "$ref": "#/$defs/IdentitySection"
+    },
+    "trustRequirements": {
+      "$ref": "#/$defs/TrustRequirements"
+    },
+    "allowedActions": {
+      "$ref": "#/$defs/AllowedActions"
+    },
+    "rateLimits": {
+      "$ref": "#/$defs/RateLimits"
+    },
+    "dataHandling": {
+      "$ref": "#/$defs/DataHandling"
+    },
+    "restrictions": {
+      "$ref": "#/$defs/Restrictions"
+    },
+    "agentIdentification": {
+      "$ref": "#/$defs/AgentIdentification"
+    }
+  },
+  "$defs": {
+    "IdentitySection": {
+      "title": "IdentitySection",
+      "description": "Declares the identity and contact information for the web property. This section is REQUIRED.",
+      "type": "object",
+      "required": ["site"],
+      "additionalProperties": false,
+      "properties": {
+        "site": {
+          "type": "string",
+          "description": "The domain name of the web property (without protocol).",
+          "examples": ["example.com", "api.example.com"]
+        },
+        "contact": {
+          "type": "string",
+          "description": "Email address for AI policy inquiries.",
+          "format": "email",
+          "examples": ["ai-policy@example.com"]
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO 8601 date when the policy was last updated.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})?)?$",
+          "examples": ["2026-03-15"]
+        },
+        "specVersion": {
+          "type": "string",
+          "description": "The version of AGENTS-MD-SPEC this file targets.",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "examples": ["1.0.0"]
+        }
+      }
+    },
+    "TrustRequirements": {
+      "title": "TrustRequirements",
+      "description": "Declares the minimum trust level and authentication requirements for agents.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimumTrustLevel": {
+          "type": "integer",
+          "description": "Minimum trust level required on a 0-5 generic scale. 0 = anonymous, 5 = administrative.",
+          "minimum": 0,
+          "maximum": 5,
+          "default": 0,
+          "examples": [0, 1, 2, 3, 4, 5]
+        },
+        "authentication": {
+          "type": "string",
+          "description": "Whether authentication is required for agent interactions.",
+          "enum": ["required", "optional", "none"],
+          "default": "none"
+        },
+        "authenticationMethods": {
+          "type": "array",
+          "description": "Accepted authentication methods.",
+          "items": {
+            "type": "string",
+            "examples": ["oauth2", "api-key", "bearer", "basic"]
+          },
+          "uniqueItems": true,
+          "examples": [["oauth2", "api-key"]]
+        }
+      }
+    },
+    "AllowedActions": {
+      "title": "AllowedActions",
+      "description": "Declares which action categories are permitted for agents. Unspecified actions default to false, except read-content which defaults to true.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "properties": {
+        "readContent": {
+          "type": "boolean",
+          "description": "May the agent read page content, text, and publicly accessible data?",
+          "default": true
+        },
+        "submitForms": {
+          "type": "boolean",
+          "description": "May the agent submit HTML form data?",
+          "default": false
+        },
+        "makePurchases": {
+          "type": "boolean",
+          "description": "May the agent initiate or complete financial transactions?",
+          "default": false
+        },
+        "modifyAccount": {
+          "type": "boolean",
+          "description": "May the agent change account settings, preferences, or profile data?",
+          "default": false
+        },
+        "accessApi": {
+          "type": "boolean",
+          "description": "May the agent make calls to documented API endpoints?",
+          "default": false
+        },
+        "downloadFiles": {
+          "type": "boolean",
+          "description": "May the agent download files or binary content?",
+          "default": false
+        },
+        "uploadFiles": {
+          "type": "boolean",
+          "description": "May the agent upload files or binary content?",
+          "default": false
+        },
+        "sendMessages": {
+          "type": "boolean",
+          "description": "May the agent send messages on behalf of a user?",
+          "default": false
+        },
+        "deleteData": {
+          "type": "boolean",
+          "description": "May the agent delete any data, records, or content?",
+          "default": false
+        },
+        "createContent": {
+          "type": "boolean",
+          "description": "May the agent create new content, posts, or records?",
+          "default": false
+        }
+      }
+    },
+    "RateLimits": {
+      "title": "RateLimits",
+      "description": "Declares the rate limits the operator requests agents to observe.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestsPerMinute": {
+          "type": "integer",
+          "description": "Maximum requests per minute. 0 means unlimited.",
+          "minimum": 0,
+          "examples": [30, 60, 120]
+        },
+        "requestsPerHour": {
+          "type": "integer",
+          "description": "Maximum requests per hour. 0 means unlimited.",
+          "minimum": 0,
+          "examples": [500, 1000, 5000]
+        },
+        "concurrentSessions": {
+          "type": "integer",
+          "description": "Maximum number of concurrent agent sessions.",
+          "minimum": 0,
+          "examples": [1, 3, 10]
+        }
+      }
+    },
+    "DataHandling": {
+      "title": "DataHandling",
+      "description": "Declares the operator's data handling commitments for agent interactions.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "personalDataCollection": {
+          "type": "string",
+          "description": "Level of personal data collected from agent interactions.",
+          "enum": ["none", "minimal", "standard", "extensive"]
+        },
+        "dataRetention": {
+          "type": "string",
+          "description": "How long interaction data is retained by the operator.",
+          "enum": ["none", "session-only", "30-days", "1-year", "indefinite"]
+        },
+        "thirdPartySharing": {
+          "type": "string",
+          "description": "Whether and how interaction data is shared with third parties.",
+          "enum": ["none", "anonymized", "with-consent", "unrestricted"]
+        },
+        "gdprCompliance": {
+          "type": "boolean",
+          "description": "Whether the site operates in compliance with GDPR."
+        }
+      }
+    },
+    "Restrictions": {
+      "title": "Restrictions",
+      "description": "Declares path-level restrictions on agent access.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "disallowedPaths": {
+          "type": "array",
+          "description": "Paths agents MUST NOT access. Supports glob patterns.",
+          "items": {
+            "type": "string",
+            "pattern": "^/",
+            "examples": ["/admin/*", "/internal/**", "/private"]
+          },
+          "uniqueItems": true,
+          "examples": [["/admin/*", "/internal/*"]]
+        },
+        "requireHumanApproval": {
+          "type": "array",
+          "description": "Paths requiring explicit human confirmation before agent action.",
+          "items": {
+            "type": "string",
+            "pattern": "^/",
+            "examples": ["/checkout/*", "/account/delete"]
+          },
+          "uniqueItems": true,
+          "examples": [["/checkout/*", "/account/delete"]]
+        },
+        "readOnlyPaths": {
+          "type": "array",
+          "description": "Paths where only read operations are permitted.",
+          "items": {
+            "type": "string",
+            "pattern": "^/",
+            "examples": ["/blog/*", "/docs/**"]
+          },
+          "uniqueItems": true,
+          "examples": [["/blog/*", "/docs/**"]]
+        }
+      }
+    },
+    "AgentIdentification": {
+      "title": "AgentIdentification",
+      "description": "Declares requirements for agent self-identification.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requireAgentHeader": {
+          "type": "boolean",
+          "description": "Must the agent send an identifying HTTP header?",
+          "default": false
+        },
+        "agentHeaderName": {
+          "type": "string",
+          "description": "The HTTP header name to use for agent identification.",
+          "default": "X-Agent-Identity",
+          "examples": ["X-Agent-Identity", "X-AI-Agent", "X-Bot-Identity"]
+        },
+        "requireDisclosure": {
+          "type": "boolean",
+          "description": "Must the agent disclose its AI nature to users it interacts with?",
+          "default": false
+        }
+      }
+    }
+  }
+}

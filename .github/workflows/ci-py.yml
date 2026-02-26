@@ -1,0 +1,54 @@
+name: CI — Python
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "parsers/python/**"
+      - ".github/workflows/ci-py.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "parsers/python/**"
+      - ".github/workflows/ci-py.yml"
+
+jobs:
+  test:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    defaults:
+      run:
+        working-directory: parsers/python
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Type check with mypy
+        run: mypy src/agents_md
+
+      - name: Lint with ruff
+        run: ruff check src/ tests/
+
+      - name: Run tests with coverage
+        run: pytest --cov=agents_md --cov-report=term-missing --cov-report=lcov -v
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.11'
+        with:
+          name: py-coverage
+          path: parsers/python/coverage.lcov
