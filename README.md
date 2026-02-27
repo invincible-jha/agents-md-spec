@@ -14,6 +14,31 @@
 
 ---
 
+## Why Does This Exist?
+
+The web has had `robots.txt` since 1994. It is a plain text file sitting at the root of every major website, and search engine crawlers read it before deciding what to index. No crawler ignores it. No site owner needs to write code to enforce it. It just works — because it is a shared convention that every participant in the ecosystem has agreed to respect.
+
+AI agents are different from crawlers in one critical way: they do not just read, they act. An AI agent shopping on your behalf can submit forms, make purchases, change account settings, and delete data. A crawling bot reading your pricing page is annoying if it ignores `robots.txt`. An AI agent making unauthorized purchases on your platform is a legal and financial emergency.
+
+There is currently no standard way for a website operator to tell an AI agent what it is allowed to do. Each agent framework has its own conventions, each platform has its own API policies, and the gap between "what the operator intends" and "what the agent does" grows wider every day. AGENTS.md fills this gap with a file format so simple that any developer can write one in five minutes — and any agent can read it with a library call.
+
+**What happens without AGENTS.md?** Agents operate on implicit assumptions. They guess what is permitted based on what is technically possible. Operators have no mechanism to communicate intent, set rate limits, require authentication, or mark paths as off-limits. The result is unpredictable agent behavior, operator friction, and an ecosystem where every platform must build ad-hoc controls from scratch.
+
+AGENTS.md is the "robots.txt for AI agents" — the missing convention that lets operators and agents agree on the rules of engagement before anything happens.
+
+---
+
+## Who Is This For?
+
+| Audience | Use Case |
+|---|---|
+| **Developers** | Parse AGENTS.md in your agent or framework to respect operator intent. Use the npm or PyPI library. |
+| **Website Operators** | Place an `AGENTS.md` file at your domain root to declare your AI agent policy. No code required. |
+| **Enterprise** | Enforce agent governance across your platform surface. Require specific trust levels, authentication, and rate limits. |
+| **Standard Bodies** | Build on or reference this specification. CC BY-SA 4.0 allows derivative works with attribution. |
+
+---
+
 ## What is AGENTS.md?
 
 When an AI agent visits a website, there is currently no standard way for the site operator to communicate:
@@ -33,6 +58,86 @@ AGENTS.md fills this gap. An operator places the file at `https://example.com/AG
 ### Why not `llms.txt`?
 
 `llms.txt` is designed for passive LLM content consumption. AGENTS.md is designed for interactive agents that take actions on behalf of users.
+
+---
+
+## Quick Start
+
+### For Website Operators (no code required)
+
+**Prerequisites:** A web server that can serve static files.
+
+Create a file named `AGENTS.md` and place it at the root of your domain so it is reachable at `https://your-site.com/AGENTS.md`.
+
+**Step 1 — Minimal valid file (2 minutes):**
+
+```markdown
+# AGENTS.md
+
+## Identity
+- site: your-site.com
+- contact: ai-policy@your-site.com
+- last-updated: 2026-02-26
+```
+
+That is a complete, valid `AGENTS.md`. Agents reading it will apply permissive defaults for all omitted sections. You are done.
+
+**Expected result:** Compliant AI agents will fetch this file before interacting with your site and respect the declared defaults.
+
+**What just happened?** You published a machine-readable policy declaration. Any agent using the `agents-md` library will automatically discover this file at the well-known URL, parse it, and use the declared identity and defaults to govern its behavior on your site.
+
+---
+
+### For Developers (add parser to your agent)
+
+**Prerequisites:** Node.js 18+ or Python 3.10+.
+
+**TypeScript / JavaScript:**
+
+```bash
+npm install agents-md
+```
+
+```typescript
+import { fetchPolicy } from 'agents-md';
+
+// Fetch and parse before your agent takes any action
+const result = await fetchPolicy('https://example.com');
+if (result?.success && result.policy) {
+  const policy = result.policy;
+  console.log('Site:', policy.identity.site);
+  console.log('Purchase allowed:', policy.allowedActions?.makePurchases);
+  // false — respect this before acting
+}
+```
+
+**Expected output:**
+```
+Site: example.com
+Purchase allowed: false
+```
+
+**What just happened?** Your agent fetched `https://example.com/AGENTS.md`, parsed it into a typed policy object, and can now gate its actions against the operator's declared intent — before touching anything on the site.
+
+**Python:**
+
+```bash
+pip install "agents-md[fetcher]"
+```
+
+```python
+import asyncio
+from agents_md import fetch_policy
+
+async def main() -> None:
+    result = await fetch_policy("https://example.com")
+    if result and result.success and result.policy:
+        policy = result.policy
+        print(f"Site: {policy.identity.site}")
+        print(f"Delete data allowed: {policy.allowed_actions.delete_data}")
+
+asyncio.run(main())
+```
 
 ---
 
@@ -228,6 +333,52 @@ agents-md-spec/
 ├── FIRE_LINE.md
 └── LICENSE
 ```
+
+---
+
+## Architecture Overview
+
+How `AGENTS.md` fits into the broader agent interaction lifecycle:
+
+```mermaid
+sequenceDiagram
+    participant Agent
+    participant AgentsMdParser as agents-md Parser
+    participant Site as Website (your-site.com)
+
+    Agent->>AgentsMdParser: fetchPolicy("https://your-site.com")
+    AgentsMdParser->>Site: GET /AGENTS.md (or /.well-known/agents.md)
+    Site-->>AgentsMdParser: AGENTS.md file content
+    AgentsMdParser-->>Agent: ParsedPolicy { allowedActions, trustRequirements, rateLimits, ... }
+
+    Agent->>Agent: Check policy.allowedActions before each action
+    Agent->>Site: Perform only permitted actions at declared rate limits
+```
+
+```mermaid
+graph TD
+    A["AGENTS.md file<br/>(static text file at domain root)"] --> B["agents-md Parser<br/>(npm or PyPI)"]
+    B --> C["ParsedPolicy object<br/>(typed, validated)"]
+    C --> D["Agent decision logic<br/>(your code)"]
+    D -->|allowed| E["Perform action on site"]
+    D -->|disallowed| F["Skip or request human approval"]
+
+    G["AumOS Trust Gate<br/>(optional)"] -.->|verifies trust level| D
+    H["aumos-audit-logger<br/>(optional)"] -.->|records decisions| D
+```
+
+The core file format and parsers have zero dependencies on AumOS or any other platform. The optional integrations (dashed lines) are provided by separate AumOS packages if you want enforcement and audit trails beyond parsing.
+
+---
+
+## Related Projects
+
+| Project | Description |
+|---|---|
+| [`aumos-core`](https://github.com/aumos-ai/aumos-core) | Core AumOS governance SDK — enforce AGENTS.md policies at runtime |
+| [`mcp-server-trust-gate`](https://github.com/aumos-ai/mcp-server-trust-gate) | MCP server that checks trust levels before executing tool calls |
+| [`agent-canary-tokens`](https://github.com/aumos-ai/agent-canary-tokens) | Honeypot tokens to detect unauthorized agent access |
+| [`aumos-audit-logger`](https://github.com/aumos-ai/aumos-core) | Structured audit logging for agent actions and policy decisions |
 
 ---
 
