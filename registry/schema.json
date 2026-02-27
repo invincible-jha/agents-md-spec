@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents-md.org/registry/schema/v1/registry-entry.json",
+  "title": "AgentsMdRegistryEntry",
+  "description": "JSON Schema for a single entry in the AGENTS.md public registry. The registry is a directory of agents and services that publish an AGENTS.md policy file at a known URL.",
+  "type": "object",
+  "required": ["name", "url", "trust_level"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name of the agent or service publishing AGENTS.md.",
+      "minLength": 1,
+      "maxLength": 128,
+      "examples": ["My Research Agent", "Acme Corp Customer Support Bot"]
+    },
+    "url": {
+      "type": "string",
+      "description": "Absolute URL to the AGENTS.md file. Must be publicly accessible over HTTPS. The registry verifier will fetch this URL to validate the entry.",
+      "format": "uri",
+      "pattern": "^https://",
+      "examples": [
+        "https://example.com/AGENTS.md",
+        "https://api.example.com/.well-known/agents.md"
+      ]
+    },
+    "trust_level": {
+      "type": "integer",
+      "description": "The minimum trust level declared in the agent's AGENTS.md file. Uses the generic 0-5 scale: 0=Anonymous, 1=Identified, 2=Verified, 3=Authorized, 4=Privileged, 5=Administrative.",
+      "minimum": 0,
+      "maximum": 5,
+      "examples": [0, 1, 2, 3]
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "List of capability tags describing what this agent can do. These are free-form strings used for discovery and filtering. Examples: 'search', 'code-generation', 'data-analysis'.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]?$",
+        "examples": ["search", "code-generation", "customer-support", "data-analysis"]
+      },
+      "uniqueItems": true,
+      "maxItems": 20,
+      "examples": [
+        ["search", "summarization"],
+        ["code-generation", "testing"],
+        ["customer-support", "faq"]
+      ]
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "Whether this entry has passed automated registry verification. Verification checks: the URL is reachable over HTTPS, the file parses as valid AGENTS.md, and the declared trust_level matches the parsed minimum-trust-level. Set by the registry CI pipeline — do not set manually in PR submissions.",
+      "default": false
+    },
+    "added_at": {
+      "type": "string",
+      "description": "ISO 8601 date when this entry was added to the registry.",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": ["2026-02-26", "2026-03-01"]
+    },
+    "maintainer": {
+      "type": "object",
+      "description": "Contact information for the person or organization responsible for this registry entry.",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the maintainer (individual or organization).",
+          "minLength": 1,
+          "maxLength": 128,
+          "examples": ["Jane Doe", "Acme Corp AI Team"]
+        },
+        "email": {
+          "type": "string",
+          "description": "Contact email for the maintainer. Used for verification notifications only.",
+          "format": "email",
+          "examples": ["ai-policy@example.com"]
+        },
+        "github": {
+          "type": "string",
+          "description": "GitHub username or organization handle of the maintainer.",
+          "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$",
+          "examples": ["janedoe", "acme-ai"]
+        },
+        "url": {
+          "type": "string",
+          "description": "URL to the maintainer's profile or organization page.",
+          "format": "uri",
+          "examples": ["https://github.com/janedoe", "https://acme.com/ai"]
+        }
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional short description of what this agent or service does. Shown in registry UIs.",
+      "maxLength": 256,
+      "examples": [
+        "A research assistant that searches academic databases and summarizes papers.",
+        "Customer support bot for Acme Corp. Handles billing and account queries."
+      ]
+    },
+    "framework": {
+      "type": "string",
+      "description": "The AI agent framework used to build this agent, if known. Used for discovery and integration guidance.",
+      "enum": [
+        "langchain",
+        "crewai",
+        "autogen",
+        "openai-agents",
+        "vercel-ai",
+        "semantic-kernel",
+        "haystack",
+        "other",
+        "unknown"
+      ],
+      "examples": ["langchain", "crewai", "openai-agents"]
+    },
+    "spec_version": {
+      "type": "string",
+      "description": "The AGENTS-MD-SPEC version this entry's AGENTS.md file targets.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0",
+      "examples": ["1.0.0"]
+    }
+  },
+  "examples": [
+    {
+      "name": "Acme Research Assistant",
+      "url": "https://research.acme.com/AGENTS.md",
+      "trust_level": 2,
+      "capabilities": ["search", "summarization", "question-answering"],
+      "verified": false,
+      "added_at": "2026-02-26",
+      "maintainer": {
+        "name": "Acme AI Team",
+        "github": "acme-ai",
+        "email": "ai-policy@acme.com"
+      },
+      "description": "Research assistant with web search and document summarization.",
+      "framework": "langchain",
+      "spec_version": "1.0.0"
+    }
+  ]
+}

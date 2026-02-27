@@ -1,0 +1,114 @@
+{
+  "name": "agents-md",
+  "displayName": "AGENTS.md Support",
+  "description": "IntelliSense, diagnostics, hover docs, and completions for AGENTS.md policy files (AGENTS-MD-SPEC-001).",
+  "version": "0.1.0",
+  "publisher": "aumos-ai",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aumos-oss/agents-md-spec"
+  },
+  "bugs": {
+    "url": "https://github.com/aumos-oss/agents-md-spec/issues"
+  },
+  "homepage": "https://github.com/aumos-oss/agents-md-spec/tree/main/vscode-extension",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "agents",
+    "agents.md",
+    "ai agents",
+    "policy",
+    "trust",
+    "llm",
+    "robot policy",
+    "spec"
+  ],
+  "icon": "images/icon.png",
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "agents-md",
+        "aliases": [
+          "AGENTS.md",
+          "agents-md"
+        ],
+        "filenames": [
+          "AGENTS.md",
+          "agents.md"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "agents-md",
+        "scopeName": "text.agents-md",
+        "path": "./syntaxes/agents-md.tmLanguage.json"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "registry/entries/*.json",
+        "url": "https://agents-md.org/registry/schema/v1/registry-entry.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "agentsMd.validateFile",
+        "title": "AGENTS.md: Validate Current File",
+        "category": "AGENTS.md"
+      },
+      {
+        "command": "agentsMd.showTrustLevels",
+        "title": "AGENTS.md: Show Trust Level Reference",
+        "category": "AGENTS.md"
+      }
+    ],
+    "configuration": {
+      "title": "AGENTS.md Support",
+      "properties": {
+        "agentsMd.enableDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable structural diagnostics for AGENTS.md files."
+        },
+        "agentsMd.enableCompletions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable section header completions for AGENTS.md files."
+        },
+        "agentsMd.enableHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable hover documentation for trust level values and section keys."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext .ts",
+    "test": "node ./dist/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.3.0"
+  }
+}

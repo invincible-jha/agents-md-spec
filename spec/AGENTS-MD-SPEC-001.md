@@ -5,6 +5,8 @@
 **Status:** Draft
 **Date:** 2026-02-26
 **License:** [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+**Community Group:** [Agent Manifest Community Group (W3C)](../docs/w3c-community-group-charter.md)
+**Citation:** Agent Manifest Community Group, "AGENTS.md Specification," AGENTS-MD-SPEC-001, 2026. Available: https://github.com/aumos-oss/agents-md-spec
 
 ---
 
@@ -24,6 +26,7 @@
 12. [Agent Compliance](#12-agent-compliance)
 13. [Versioning](#13-versioning)
 14. [Examples](#14-examples)
+15. [Standardization Path](#15-standardization-path)
 
 ---
 
@@ -69,6 +72,7 @@ AGENTS.md is designed with the following principles:
 | `llms.txt` | LLM content accessibility hints | Complements — `llms.txt` is for content, AGENTS.md is for behavior |
 | OpenAPI 3.x | API capability description | Complements — describes constraints, not capabilities |
 | W3C WAI | Accessibility | Unrelated |
+| W3C Community Group | Standardization process | AGENTS.md is submitted to the [Agent Manifest Community Group](../docs/w3c-community-group-charter.md) for consensus-building and eventual W3C Report status |
 
 ---
 
@@ -570,6 +574,80 @@ See the `/spec/examples/` directory in this repository for complete AGENTS.md ex
 
 ---
 
+## 15. Standardization Path
+
+### 15.1 W3C Community Group
+
+This specification is submitted to the **Agent Manifest Community Group** at W3C for open, multi-stakeholder standardization. The Community Group process allows any individual or organization to participate without W3C membership, while providing the IP framework and institutional credibility needed for broad adoption.
+
+The full Community Group charter is available at [`docs/w3c-community-group-charter.md`](../docs/w3c-community-group-charter.md).
+
+**Community Group URI:** `https://www.w3.org/community/agentmanifest/` (proposed)
+**GitHub:** `https://github.com/aumos-oss/agents-md-spec`
+**Mailing list:** To be established upon Community Group formation
+
+### 15.2 Citation Format
+
+When citing this specification in academic or standards documents, use the following format:
+
+**W3C Community Group Report citation:**
+
+> Agent Manifest Community Group. *AGENTS.md Specification*, AGENTS-MD-SPEC-001, Version 1.0.0. W3C Community Group Draft Report, 2026. Available at: https://github.com/aumos-oss/agents-md-spec
+
+**BibTeX:**
+
+```bibtex
+@techreport{agentmanifest-spec-001,
+  author      = {{Agent Manifest Community Group}},
+  title       = {{AGENTS.md} Specification},
+  number      = {AGENTS-MD-SPEC-001},
+  institution = {W3C Community Group},
+  year        = {2026},
+  url         = {https://github.com/aumos-oss/agents-md-spec},
+  note        = {Version 1.0.0, Draft}
+}
+```
+
+### 15.3 Design Philosophy and the robots.txt Analogy
+
+AGENTS.md is `robots.txt` for AI agents.
+
+`robots.txt` succeeded as a web convention because it was simple, hosted at a predictable location, machine-readable without special libraries, and honored by cooperative actors. AGENTS.md follows the same design philosophy:
+
+1. **Plain text, human-readable.** A Markdown file anyone can read and write without tooling.
+2. **Predictable location.** Hosted at `/{domain}/AGENTS.md` or `/.well-known/agents.md`.
+3. **No special libraries required to read.** The `- key: value` format is parseable in under 100 lines of code in any language.
+4. **Advisory, not enforceable.** Compliance is the mark of a well-behaved agent, not a technical guarantee.
+
+This philosophy guides all normative decisions in the specification: when in doubt, choose the simpler approach.
+
+### 15.4 Community Group Deliverables and Schedule
+
+The Community Group is committed to producing the following:
+
+| Deliverable | Target Phase | Target License |
+|---|---|---|
+| AGENTS.md Specification (W3C Community Group Report) | Phase 3 (month 10–12) | CC BY-SA 4.0 |
+| JSON Schema for AGENTS.md | Phase 2 (month 4–9) | CC BY-SA 4.0 |
+| Conformance Test Suite | Phase 2 (month 4–9) | MIT |
+| TypeScript Reference Parser | Phase 1 (month 1–3) | MIT |
+| Python Reference Parser | Phase 1 (month 1–3) | MIT |
+| Adoption Guidance Documents | Phase 3 (month 10–12) | CC BY-SA 4.0 |
+
+See [`docs/w3c-community-group-charter.md`](../docs/w3c-community-group-charter.md) for the full timeline and participation details.
+
+### 15.5 How to Participate
+
+The Community Group is open to all. To join:
+
+1. Create or log into your [W3C account](https://www.w3.org/accounts/request).
+2. Navigate to the [Agent Manifest Community Group page](https://www.w3.org/community/agentmanifest/).
+3. Click "Join this Group" and sign the W3C Community Contributor License Agreement (CLA).
+
+To contribute to the specification before the Community Group is formally established, open an issue or pull request on the [GitHub repository](https://github.com/aumos-oss/agents-md-spec).
+
+---
+
 ## Appendix A: ABNF Grammar
 
 The following ABNF grammar (per [RFC 5234](https://tools.ietf.org/html/rfc5234)) provides a formal definition of the AGENTS.md format:
@@ -598,6 +676,7 @@ CRLF           = CR LF / LF
 | Version | Date | Changes |
 |---|---|---|
 | 1.0.0 | 2026-02-26 | Initial specification draft |
+| 1.0.1 | 2026-02-26 | Added Section 15 (Standardization Path), W3C Community Group citation format, and Community Group reference to Section 1.4 relationship table |
 
 ---
 

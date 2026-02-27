@@ -10,6 +10,7 @@
 [![PyPI](https://img.shields.io/pypi/v/agents-md?label=pypi%20agents-md)](https://pypi.org/project/agents-md/)
 [![License: MIT](https://img.shields.io/badge/parsers-MIT-green)](parsers/LICENSE)
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/spec-CC%20BY--SA%204.0-lightgrey)](spec/LICENSE)
+[![Governance Score](https://img.shields.io/badge/governance-self--assessed-blue)](https://github.com/aumos-ai/agents-md-spec)
 
 ---
 
