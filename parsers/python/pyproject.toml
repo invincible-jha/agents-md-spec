@@ -39,10 +39,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/aumos-oss/agents-md-spec"
-Repository = "https://github.com/aumos-oss/agents-md-spec"
-Documentation = "https://github.com/aumos-oss/agents-md-spec/tree/main/docs"
-"Bug Tracker" = "https://github.com/aumos-oss/agents-md-spec/issues"
+Homepage = "https://github.com/aumos-ai/agents-md-spec"
+Repository = "https://github.com/aumos-ai/agents-md-spec"
+Documentation = "https://github.com/aumos-ai/agents-md-spec/tree/main/docs"
+"Bug Tracker" = "https://github.com/aumos-ai/agents-md-spec/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/agents_md"]

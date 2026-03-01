@@ -12,11 +12,14 @@
     "llm",
     "autonomous-agents"
   ],
-  "homepage": "https://github.com/aumos-oss/agents-md-spec",
+  "homepage": "https://github.com/aumos-ai/agents-md-spec",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aumos-oss/agents-md-spec.git",
+    "url": "https://github.com/aumos-ai/agents-md-spec.git",
     "directory": "parsers/typescript"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "MIT",
   "type": "module",

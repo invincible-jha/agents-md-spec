@@ -7,12 +7,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aumos-oss/agents-md-spec"
+    "url": "https://github.com/aumos-ai/agents-md-spec"
   },
   "bugs": {
-    "url": "https://github.com/aumos-oss/agents-md-spec/issues"
+    "url": "https://github.com/aumos-ai/agents-md-spec/issues"
   },
-  "homepage": "https://github.com/aumos-oss/agents-md-spec/tree/main/vscode-extension",
+  "homepage": "https://github.com/aumos-ai/agents-md-spec/tree/main/vscode-extension",
   "engines": {
     "vscode": "^1.85.0"
   },
